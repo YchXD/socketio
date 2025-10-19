@@ -6,7 +6,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*", // or restrict to your frontend URL
+    origin: "*", 
     methods: ["GET", "POST"]
   }
 });
@@ -20,8 +20,15 @@ io.on("connection", (socket) => {
 
   socket.on("new_message", (msg) => {
     console.log("📡 Message received:", msg);
-    io.emit("new_message", msg); // broadcast to all clients
+    io.emit("new_message", msg); 
   });
+});
+app.use(express.json());
+
+app.post("/api/emit_message", (req, res) => {
+  const payload = req.body;
+  io.emit("new_message", payload);
+  res.json({ success: true });
 });
 
 const PORT = process.env.PORT || 3001;
